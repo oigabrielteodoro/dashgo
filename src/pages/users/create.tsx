@@ -1,6 +1,7 @@
 import { Box, Button, Divider, Flex, Heading, HStack, SimpleGrid, VStack } from "@chakra-ui/react";
 
 import Link from "next/link";
+import Head from "next/head";
 
 import { SubmitHandler, useForm } from "react-hook-form";
 
@@ -38,67 +39,73 @@ export default function CreateUser() {
   }
 
   return (
-    <Box>
-      <Header />
+    <>
+      <Head>
+        <title>Criar usuário | dashgo</title>
+      </Head>
 
-      <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
-        <Sidebar />
+      <Box>
+        <Header />
 
-        <Box 
-          as="form" 
-          flex="1" 
-          borderRadius="8" 
-          bg="gray.800" 
-          p={["6", "8"]}
-          onClick={handleSubmit(handleCreateUser)}
-        >
-          <Heading size="lg" fontWeight="medium">Criar usuário</Heading>
+        <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+          <Sidebar />
 
-          <Divider my="6" borderColor="gray.700" />
+          <Box 
+            as="form" 
+            flex="1" 
+            borderRadius="8" 
+            bg="gray.800" 
+            p={["6", "8"]}
+            onClick={handleSubmit(handleCreateUser)}
+          >
+            <Heading size="lg" fontWeight="medium">Criar usuário</Heading>
 
-          <VStack spacing="8">
-            <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
-              <Input 
-                label="Nome completo" 
-                error={errors.name}
-                {...register('name')}
-              />
-              <Input 
-                type="email" 
-                label="E-mail" 
-                error={errors.email}
-                {...register('email')}
-              />
-            </SimpleGrid>
+            <Divider my="6" borderColor="gray.700" />
 
-            <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
-              <Input 
-                type="password" 
-                label="Senha" 
-                error={errors.password}
-                {...register('password')}
-              />
-              <Input 
-                type="password" 
-                label="Confirmação da senha" 
-                error={errors.password_confirmation}
-                {...register('password_confirmation')}
-              />
-            </SimpleGrid>
-          </VStack> 
+            <VStack spacing="8">
+              <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
+                <Input 
+                  label="Nome completo" 
+                  error={errors.name}
+                  {...register('name')}
+                />
+                <Input 
+                  type="email" 
+                  label="E-mail" 
+                  error={errors.email}
+                  {...register('email')}
+                />
+              </SimpleGrid>
 
-          <Flex mt="8" justify="flex-end">
-            <HStack spacing="4">
-              <Link href="/users" passHref>
-                <Button as="a" colorScheme="whiteAlpha">Cancelar</Button>
-              </Link> 
-              <Button colorScheme="pink" isLoading={isSubmitting}>
-                Salvar
-              </Button>
-            </HStack>
-          </Flex>
-        </Box>
-      </Flex>  
-    </Box>
+              <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
+                <Input 
+                  type="password" 
+                  label="Senha" 
+                  error={errors.password}
+                  {...register('password')}
+                />
+                <Input 
+                  type="password" 
+                  label="Confirmação da senha" 
+                  error={errors.password_confirmation}
+                  {...register('password_confirmation')}
+                />
+              </SimpleGrid>
+            </VStack> 
+
+            <Flex mt="8" justify="flex-end">
+              <HStack spacing="4">
+                <Link href="/users" passHref>
+                  <Button as="a" colorScheme="whiteAlpha">Cancelar</Button>
+                </Link> 
+                <Button colorScheme="pink" isLoading={isSubmitting}>
+                  Salvar
+                </Button>
+              </HStack>
+            </Flex>
+          </Box>
+        </Flex>  
+      </Box>
+    </>
   )
-}
+} 
