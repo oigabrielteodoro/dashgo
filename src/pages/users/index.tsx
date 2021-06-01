@@ -1,10 +1,13 @@
 import { useState } from "react";
 
-import { Box, Flex, Heading, Button, Icon, Table, Thead, Tr, Th, Td, Checkbox, Tbody, Text, useBreakpointValue, Spinner } from "@chakra-ui/react";
+import { Box, Flex, Heading, Button, Icon, Table, Thead, Tr, Th, Td, Checkbox, Tbody, Text, useBreakpointValue, Spinner, Link as ChakraLink } from "@chakra-ui/react";
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
 
 import Link from "next/link";
 import Head from "next/head";
+
+import { api } from "../../services/api";
+import { queryClient } from "../../services/queryClient";
 
 import { useUsers } from "../../services/hooks/useUsers";
 
@@ -21,6 +24,16 @@ export default function UserList() {
     base: false,
     lg: true,
   });
+
+  async function handlePrefetchUser(userId: string) {
+    await queryClient.prefetchQuery(['user', userId], async () => {
+      const response = await api.get(`users/${userId}`);
+
+      return response.data;
+    }, {
+      staleTime: 1000 * 60 * 10 // 10 minutes
+    })
+  }
 
   return ( 
     <>
@@ -90,7 +103,9 @@ export default function UserList() {
                         </Td>
                         <Td>
                           <Box>
-                            <Text fontWeight="bold">{user.name}</Text>
+                            <ChakraLink color="purple.400" onMouseEnter={() => handlePrefetchUser(user.id)}>
+                              <Text fontWeight="bold">{user.name}</Text>
+                            </ChakraLink>
                             <Text fontSize="small" color="gray.300">{user.email}</Text>
                           </Box>
                         </Td>
