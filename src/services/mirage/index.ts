@@ -12,7 +12,6 @@ export function makeServer() {
     serializers: {
       application: ActiveModelSerializer,
     },
-
     models: {
       user: Model.extend<Partial<User>>({}),
     },

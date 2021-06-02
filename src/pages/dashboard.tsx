@@ -8,6 +8,9 @@ import { ApexOptions } from 'apexcharts';
 
 import { Header } from "../components/Header";
 import { Sidebar } from "../components/Sidebar";
+import { useAuth } from "../contexts/AuthContext";
+import { useEffect } from "react";
+import { api } from "../services/auth";
 
 const Chart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
@@ -66,6 +69,14 @@ const series = [
 ]
 
 export default function Dashboard() {
+  const { user } = useAuth();
+
+  useEffect(() => {
+    api.get('/me').then(response => {
+      console.log(response.data);
+    }).catch(error => console.log(error.message));
+  }, []);
+
   return (
     <>
       <Head>
