@@ -17,6 +17,7 @@ type SignInCredentials = {
 
 type AuthContextData = {
   signIn: (credentials: SignInCredentials) => Promise<void>;
+  signOut: () => void;
   user?: User;
   isAuthenticated: boolean;
 }
@@ -27,9 +28,13 @@ type AuthProviderProps = {
 
 const AuthContext = createContext({} as AuthContextData);
 
+let authChannel: BroadcastChannel;
+
 export function signOut() {
   destroyCookie(undefined, 'dashgo.token'); 
   destroyCookie(undefined, 'dashgo.refreshToken');
+
+  authChannel.postMessage('signOut');
 
   Router.push('/');
 }
@@ -37,6 +42,23 @@ export function signOut() {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User>();
   const isAuthenticated = !!user;
+
+  useEffect(() => {
+    authChannel = new BroadcastChannel('auth');
+
+    authChannel.onmessage = (message) => {
+      switch (message.data) {
+        case 'signOut':
+          Router.push('/');
+          break;
+        case 'signIn':
+          Router.push('/dashboard');
+          break;
+        default:
+          break;
+      }
+    } 
+  }, []);
 
   useEffect(() => {
     const { 'dashgo.token': token } = parseCookies();
@@ -80,13 +102,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
       api.defaults.headers.Authorization = `Bearer ${token}`;
 
       Router.push('/dashboard');
+
+      authChannel.postMessage('signIn');
     } catch (error) {
       console.log(error.message);
     }
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, signIn }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   )
