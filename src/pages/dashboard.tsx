@@ -1,4 +1,5 @@
 import { Flex, SimpleGrid, Box, Text, theme } from "@chakra-ui/react";
+import { destroyCookie } from "nookies";
 
 import Head from "next/head";
 
@@ -8,9 +9,10 @@ import { ApexOptions } from 'apexcharts';
 
 import { Header } from "../components/Header";
 import { Sidebar } from "../components/Sidebar";
-import { useAuth } from "../contexts/AuthContext";
-import { useEffect } from "react";
-import { api } from "../services/auth";
+
+import { withSSRAuth } from "../utils/withSSRAuth";
+
+import { setupApiClient } from "../services/auth";
 
 const Chart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
@@ -69,14 +71,6 @@ const series = [
 ]
 
 export default function Dashboard() {
-  const { user } = useAuth();
-
-  useEffect(() => {
-    api.get('/me').then(response => {
-      console.log(response.data);
-    }).catch(error => console.log(error.message));
-  }, []);
-
   return (
     <>
       <Head>
@@ -114,3 +108,13 @@ export default function Dashboard() {
     </>
   )
 }
+
+export const getServerSideProps = withSSRAuth(async (context) => {
+  const apiClient = setupApiClient(context);
+
+  const response = await apiClient.get('/me');
+
+  return {
+    props: {},
+  }
+})
